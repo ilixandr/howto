@@ -1,0 +1,4 @@
+1. add new file(s): `git add <filename>` or `git add .`
+2. commit changes: `git commit -m <message>` or `git commit -am <message>`
+3. push modified file(s): `git push` or `git push origin master` (in case it is the very first push)
+4. check if local storage is up-to-date with github: `git pull`
