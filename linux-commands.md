@@ -9,5 +9,7 @@ Rip audio CD in debian
 ======================
 
 <code>pacpl --rip <tracks> --to <format></code>
+  
 `<tracks>` can be `all`, or track numbers separated by commas, e.g. `1,2,4`
+
 `<format>` can be `mp3`, `mp4`, `flac`,...
