@@ -8,7 +8,7 @@ Note that folder *result* must exist and I am redirecting output to a text file,
 Rip audio CD in debian
 ======================
 
-<code>pacpl --rip <tracks> --to <format></code>
+`pacpl --rip <tracks> --to <format>`
   
 `<tracks>` can be `all`, or track numbers separated by commas, e.g. `1,2,4`
 
