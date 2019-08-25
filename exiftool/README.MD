@@ -34,4 +34,30 @@ In Europe you use: Copyright {Year} {Copyright owner}, all rights reserved. See 
 - An example would be:
 <code>exiftool -rights="Copyright 2019 Comunitatea, all rights reserved" -CopyrightNotice="Copyright 2019 Comunitatea, all rights reserved" "filename.extension"</code>
 
+Add Creator / Author to image metadata
+===
+- Add Creator to a file in current directory:
+<code>exiftool -XMP-dc:Creator="Creator" "filename.extension"</code>
+- Add Creator to all files in current directory:
+<code>exiftool -XMP-dc:Creator="Creator" .</code>
 
+Edit Creative Commons rights information
+===
+- Add Rights and usageterms to a file in current directory:
+<code>exiftool -XMP-dc:Rights="This work is licensed to the public under the Creative Commons Attribution-ShareAlike license http://creativecommons.org/licenses/by-sa/4.0/" -xmp:usageterms="This work is licensed to the public under the Creative Commons Attribution-ShareAlike license http://creativecommons.org/licenses/by-sa/4.0/" "filename.extension"</code>
+- Add Rights and usageterms to all files in current directory:
+<code>exiftool -XMP-dc:Rights="This work is licensed to the public under the Creative Commons Attribution-ShareAlike license http://creativecommons.org/licenses/by-sa/4.0/" -xmp:usageterms="This work is licensed to the public under the Creative Commons Attribution-ShareAlike license http://creativecommons.org/licenses/by-sa/4.0/" .</code>
+
+Using the Creative Commons schema
+===
+- Add creative commons to a file in current directory:
+<code>exiftool -XMP-cc:license="http://creativecommons.org/licenses/by-sa/4.0/" -XMP-cc:AttributionName="Creator" -XMP-cc:AttributionURL="http://creatorURL.com" "filename.extension"</code>
+- Add creative commons to all files in current directory:
+<code>exiftool -XMP-cc:license="http://creativecommons.org/licenses/by-sa/4.0/" -XMP-cc:AttributionName="Creator" -XMP-cc:AttributionURL="http://creatorURL.com" .</code>
+
+We will be using license BY-NC-ND, available at https://creativecommons.org/licenses/by-nc-nd/4.0/
+
+CONCLUSION
+===
+I a single command, this is what we can do to alter our pictures' exif data:
+exiftool -XMP-dc:Creator="Comunitatea Valcelele Bobalna" -rights="Copyright 2019 Comunitatea Valcelele Bobalna, all rights reserved" -CopyrightNotice="Copyright 2019 Comunitatea Valcelele Bobalna, all rights reserved" -XMP-cc:license="http://creativecommons.org/licenses/by-nc-nd/4.0/" -XMP-cc:AttributionName="Comunitatea Valcelele Bobalna" -XMP-cc:AttributionURL="http://valcelele.bobalna.ro" "filename.extension"
