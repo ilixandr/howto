@@ -20,5 +20,11 @@ Remove all metadata
 - Remove all metadata from all png files in the working directory:
 <code>exiftool -all= -overwrite_original -ext png .</code>
 
+Add copyright information to image metadata
+===
+- Add standard copyright information to a file in current directory:
+<code>exiftool -rights="Copyright" -CopyrightNotice="Copyright" "filename.extension"</code>
+- Add standard copyright information to all files in current directory:
+<code>exiftool -rights="Copyright" -CopyrightNotice="Copyright" .</code>
 
-
+ExifTool creates a copy of the original file, appending <code>_original</code> to the file name, as a backup. To avoid that and modify files directly, use the <code>-overwrite_original</code> option.
