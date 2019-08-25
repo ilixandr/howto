@@ -60,4 +60,5 @@ We will be using license BY-NC-ND, available at https://creativecommons.org/lice
 CONCLUSION
 ===
 I a single command, this is what we can do to alter our pictures' exif data:
-exiftool -XMP-dc:Creator="Comunitatea Valcelele Bobalna" -rights="Copyright 2019 Comunitatea Valcelele Bobalna, all rights reserved" -CopyrightNotice="Copyright 2019 Comunitatea Valcelele Bobalna, all rights reserved" -XMP-cc:license="http://creativecommons.org/licenses/by-nc-nd/4.0/" -XMP-cc:AttributionName="Comunitatea Valcelele Bobalna" -XMP-cc:AttributionURL="http://valcelele.bobalna.ro" "filename.extension"
+
+<code>exiftool -XMP-dc:Creator="Comunitatea Valcelele Bobalna" -rights="Copyright 2019 Comunitatea Valcelele Bobalna, all rights reserved" -CopyrightNotice="Copyright 2019 Comunitatea Valcelele Bobalna, all rights reserved" -XMP-cc:license="http://creativecommons.org/licenses/by-nc-nd/4.0/" -XMP-cc:AttributionName="Comunitatea Valcelele Bobalna" -XMP-cc:AttributionURL="http://valcelele.bobalna.ro" "filename.extension"</code>
