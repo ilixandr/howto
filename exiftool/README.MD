@@ -27,4 +27,11 @@ Add copyright information to image metadata
 - Add standard copyright information to all files in current directory:
 <code>exiftool -rights="Copyright" -CopyrightNotice="Copyright" .</code>
 
-ExifTool creates a copy of the original file, appending <code>_original</code> to the file name, as a backup. To avoid that and modify files directly, use the <code>-overwrite_original</code> option.
+ExifTool creates a copy of the original file, appending <code>_original</code> to the file name, as a backup. To avoid that and modify files directly, use the <code>-overwrite_original</code> option. 
+
+In Europe you use: Copyright {Year} {Copyright owner}, all rights reserved. See http://www.photometadata.org/meta-resources-field-guide-to-metadata#Copyright%20Notice
+
+- An example would be:
+<code>exiftool -rights="Copyright 2019 Comunitatea, all rights reserved" -CopyrightNotice="Copyright 2019 Comunitatea, all rights reserved" "filename.extension"</code>
+
+
