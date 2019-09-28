@@ -1,0 +1,339 @@
+Using the DOM like a Pro
+by Danny Moerkerke
+https://itnext.io/using-the-dom-like-a-pro-163a6c552eba
+
+How to stop fearing the DOM, use it to its full potential and actually start loving it
+
+When I first started working as a professional web developer back in 2008 I knew some HTML, CSS and PHP. At the same time I was also learning this thing called JavaScript because it allowed me to show and hide elements and do cool things like dropdown menus.
+
+At the time I was working for a small company that mainly created CMS systems for clients and we needed a multiple file uploader. Something that was not possible at that time with native JavaScript.
+
+After some searching I found a fancy solution based on Flash and this JavaScript library called MooTools. MooTools had this cool $ function to select DOM elements and came with modules like progress bars and Ajax requests. A few weeks later I discovered jQuery and I was blown away.
+
+No more verbose, clunky DOM manipulation but easy, chainable selectors and it came with a whole bunch of useful plugins as well.
+
+Fast-forward to 2019 and the world is ruled by frameworks. If you started as a web developer in the last decade, chances are that you are hardly exposed to the “raw” DOM, if ever. You might not even need to.
+
+Even though frameworks like Angular and React caused a strong decline in the popularity of jQuery, it is still used by a staggering 66 million websites which is estimated at about 74% of all websites in the world.
+
+The legacy of jQuery is quite impressive and a great example of how it influenced the standards are the querySelector and querySelectorAll methods which mimic jQuery’s $ function.
+
+Ironically, these two methods were probably the biggest cause of jQuery’s declined popularity since they replaced jQuery’s most used functionality: easy selection of DOM elements.
+
+But the native DOM API is verbose.
+
+I mean, it’s $ vs. document.querySelectorAll.
+
+And that’s what puts off developers from using the native DOM API. But there’s really no need for that.
+
+The native DOM API is great and incredibly useful. Yes, it’s verbose but that is because these are low-level building blocks, meant to build abstractions upon. And if you’re really worried about the extra key strokes: all modern day editors and IDEs provide excellent code completion. You can also alias your most frequently used functionality as I will show here.
+
+Let’s jump in!
+Selecting elements
+Single element
+
+To select a single element using any valid CSS selector use:
+
+document.querySelector(/* your selector */)
+
+You can use any selector here:
+
+document.querySelector('.foo')            // class selector
+document.querySelector('#foo')            // id selector
+document.querySelector('div')             // tag selector
+document.querySelector('[name="foo"]')    // attribute selector
+document.querySelector('div + p > span')  // you go girl!
+
+When there are no elements matched it will return null.
+Multiple elements
+
+To select multiple elements use:
+
+document.querySelectorAll('p')  // selects all <p> elements
+
+You can use document.querySelectorAll in the same way as document.querySelector. Any valid CSS selector will do and the only difference is querySelector will return a single element whereas querySelectorAll will return a static NodeList containing the found elements. If there are no elements found it will return an empty NodeList.
+
+A NodeList is an iterable object which is like an array but it’s not really an array, so it doesn’t have the same methods. You can run forEach on it but not for example map, reduce or find.
+
+If you do need to run array methods on it then you can simply turn it into an array using destructuring or Array.from:
+
+const arr = [...document.querySelectorAll('p')];orconst arr = Array.from(document.querySelectorAll('p'));arr.find(element => {...});  // .find() now works
+
+The querySelectorAll method differs from methods like getElementsByTagName and getElementsByClassName in that these methods return an HTMLCollection which is a live collection, whereas querySelectorAll returns a NodeList which is static.
+
+So if you would do getElementsByTagName('p') and one <p> would be removed from the document, it would be removed from the returned HTMLCollection as well.
+
+But if you would do querySelectorAll('p') and one <p> would be removed from the document, it would still be present in the returned NodeList.
+
+Another important difference is that an HTMLCollection can only contain HTMLElements and a NodeList can contain any type of Node.
+Relative searches
+
+You don’t necessarily need to run querySelector(All) on document. You can run it on any HTMLElement to run a relative search:
+
+const div = document.querySelector('#container');
+div.querySelectorAll('p')  // finds all <p> tags in #container only
+
+But it’s still verbose!
+
+If you are still worried about extra keystrokes you can alias both methods:
+
+const $ = document.querySelector.bind(document);
+$('#container');const $$ = document.querySelectorAll.bind(document);
+$$('p');
+
+There you go.
+Going up the DOM tree
+
+Using CSS selectors for selecting DOM elements means we can only travel down the DOM tree. There are no CSS selectors to travel up the tree to select parents.
+
+But we can travel up the DOM tree with the closest() method which also takes any valid CSS selector:
+
+document.querySelector('p').closest('div');
+
+This will find the nearest parent <div> element of the paragraph selected by document.querySelector('p'). You can chain these calls to go further up the tree:
+
+document.querySelector('p').closest('div').closest('.content');
+
+Adding elements
+
+Code to add one or more elements to the DOM tree is notorious for getting verbose quickly. Let’s say you want to add the following link to your page:
+
+<a href="/home" class="active">Home</a>
+
+You would need to do:
+
+const link = document.createElement('a');
+link.setAttribute('href', '/home');
+link.className = 'active';
+link.textContent = 'Home';document.body.appendChild(link);
+
+Now imagine having to do this for 10 elements…
+
+At least jQuery allows you to do:
+
+$('body').append('<a href="/home" class="active">Home</a>');
+
+Well guess what? There is a native equivalent:
+
+document.body.insertAdjacentHTML('beforeend', 
+'<a href="/home" class="active">Home</a>');
+
+The insertAdjacentHTML method allows you to insert an arbitrary valid HTML string into the DOM at four positions, indicated by the first parameter:
+
+    'beforebegin': before the element
+    'afterbegin': inside the element before its first child
+    'beforeend': inside the element after its last child
+    'afterend': after the element
+
+<!-- beforebegin -->
+<p>
+  <!-- afterbegin -->
+  foo
+  <!-- beforeend -->
+</p>
+<!-- afterend -->
+
+This also makes specifying the exact point where a new element should be inserted much easier. Say you want to insert an <a> right before this <p>. Without insertAdjacentHTML you would have to do this:
+
+const link = document.createElement('a');
+const p = document.querySelector('p');p.parentNode.insertBefore(link, p);
+
+Now you can just do:
+
+const p = document.querySelector('p');p.insertAdjacentHTML('beforebegin', '<a></a>');
+
+There is also an equivalent method to insert DOM elements:
+
+const link = document.createElement('a');
+const p = document.querySelector('p');p.insertAdjacentElement('beforebegin', link);
+
+and text:
+
+p.insertAdjacentText('afterbegin', 'foo');
+
+Moving elements
+
+The insertAdjacentElement method can also be used to move around existing elements in the same document. When an element that is inserted with insertAdjacentElement is already part of the document it will simply be moved.
+
+If you have this HTML:
+
+<div class="first">
+  <h1>Title</h1>
+</div><div class="second">
+  <h2>Subtitle</h2>
+</div>
+
+and the <h2> is inserted after the <h1>:
+
+const h1 = document.querySelector('h1');
+const h2 = document.querySelector('h2');h1.insertAdjacentElement('afterend', h2);
+
+it will be simply be moved, not copied:
+
+<div class="first">
+  <h1>Title</h1>
+  <h2>Subtitle</h2>
+</div><div class="second">
+  
+</div>
+
+Replacing elements
+
+A DOM element can be replaced by any other DOM element using its replaceWith method:
+
+someElement.replaceWith(otherElement);
+
+The element it is replaced with can be a new element created with document.createElement or an element that is already part of the same document (in which case it will again be moved, not copied):
+
+<div class="first">
+  <h1>Title</h1>
+</div><div class="second">
+  <h2>Subtitle</h2>
+</div>const h1 = document.querySelector('h1');
+const h2 = document.querySelector('h2');h1.replaceWith(h2);// result:<div class="first">
+  <h2>Subtitle</h2>
+</div><div class="second">
+  
+</div>
+
+Removing elements
+
+Just call its remove method:
+
+const container = document.querySelector('#container');
+container.remove();  // hasta la vista, baby
+
+Much better than the old way:
+
+const container = document.querySelector('#container');
+container.parentNode.removeChild(container);
+
+Create an element from raw HTML
+
+The insertAdjacentHTML method allows us to insert raw HTML into a document, but what if we want to create and element from raw HTML and use it later?
+
+We can use the DomParser object and its method parseFromString for this. DomParser provides the ability to parse HTML or XML source code into a DOM document. We use the parseFromString method to create a document with only one element and return only that one element:
+
+const createElement = domString => new DOMParser().parseFromString(domString, 'text/html').body.firstChild;const a = createElement('<a href="/home" class="active">Home</a>');
+
+Inspecting the DOM
+
+The standard DOM API also provides some handy methods to inspect the DOM. For example, matches determines if an element will match a certain selector:
+
+<p class="foo">Hello world</p>const p = document.querySelector('p');p.matches('p');     // true
+p.matches('.foo');  // true
+p.matches('.bar');  // false, does not have class "bar"
+
+You can also check if an element is a child of another element with the contains method:
+
+<div class="container">
+  <h1 class="title">Foo</h1>
+</div><h2 class="subtitle">Bar</h2>const container = document.querySelector('.container');
+const h1 = document.querySelector('h1');
+const h2 = document.querySelector('h2');container.contains(h1);  // true
+container.contains(h2);  // false
+
+You can get even more detailed information on elements with the compareDocumentPosition method. This method allows you to determine if one element precedes or follows another element or if one of these elements contains the other. It returns an integer which represents the relation between the compared elements.
+
+Here’s an example with the same elements from the previous example:
+
+<div class="container">
+  <h1 class="title">Foo</h1>
+</div><h2 class="subtitle">Bar</h2>const container = document.querySelector('.container');
+const h1 = document.querySelector('h1');
+const h2 = document.querySelector('h2');//  20: h1 is contained by container and follows container
+container.compareDocumentPosition(h1); // 10: container contains h1 and precedes it
+h1.compareDocumentPosition(container);// 4: h2 follows h1
+h1.compareDocumentPosition(h2);// 2: h1 precedes h2
+h2.compareDocumentPosition(h1);
+
+The value returned from compareDocumentPosition is an integer whose bits represent the relationship between the nodes, relative to the argument given to this method.
+
+So considering the syntax node.compareDocumentPostion(otherNode) the meaning of the returned value is:
+
+    1: the nodes are not part of the same document
+    2: otherNode precedes node
+    4: otherNode follows node
+    8: otherNode contains node
+    16: otherNode is contained by node
+
+More than one of the bits may be set so that is why in the example above container.compareDocumenPosition(h1) returns 20 where you might expect 16 since h1 is contained by container. But h1 also follows container (4) so the resulting value is 16 + 4 = 20.
+More details please!
+
+You can observe changes to any DOM node through the MutationObserver interface. This includes text changes, nodes being added to or removed from the observed node or changes to the node’s attributes.
+
+The MutationObserver is an incredibly powerful API to observe virtually any change that occurs on a DOM element and its child nodes.
+
+A new MutationObserver is created by calling its constructor with a callback function. This callback will be called whenever a change occurs on the observed node:
+
+const observer = new MutationObserver(callback);
+
+To observe an element we need to call the observe method of the observer with the node to be observed as the first parameter and an object with options as the second parameter.
+
+const target = document.querySelector('#container');
+const observer = new MutationObserver(callback);observer.observe(target, options);
+
+The observing of the target does not start until observe is called.
+
+This options object takes the following keys:
+
+    attributes: when set to true, changes to attributes of the node will be watched
+    attributeFilter: an array of attribute names to watch, when attributes is true and this is not set, changes to all attributes of the node will be watched
+    attributeOldValue: when set to true the previous value of the attribute will be recorded whenever a change occurs
+    characterData: when set to true this will record changes to the text of a text node, so this only works on Textnodes, not HTMLElements. For this to work, the node being observed needs to be a Text node or, if the observer monitors an HTMLElement, the option subtree needs to be set to true to also monitor changes to child nodes.
+    characterDataOldValue: when set to true the previous value of the characted data will be recorded whenever a change occurs
+    subtree: set to true to also observe changes to child nodes of the element being observed.
+    childList: set to true to monitor the element for addition and removal of child nodes. When subtree is set to true child elements will also be watched for addition and removal of child nodes.
+
+When the observing of an element has started by calling observe, the callback that was passed to the MutationObserver constructor is called with an array of MutationRecord objects describing the changes that occurred and the observer that was invoked as the second parameter.
+
+A MutationRecord contains the following properties:
+
+    type: the type of change, either attributes, characterData or childList.
+    target: the element that changed, either its attributes, character data or child elements
+    addedNodes: a list of added nodes or an empty NodeList if none were added
+    removedNodes: a list of removed nodes or an empty NodeList if none were removed
+    attributeName: the name of the changed attribute or null if no attribute was changes
+    previousSibling: the previous sibling of the added or removed nodes or null
+    nextSibling: the next sibling of the added or removed nodes or null
+
+So let’s say we want to observe changes to attributes and child nodes:
+
+const target = document.querySelector('#container');
+const callback = (mutations, observer) => {
+  mutations.forEach(mutation => {
+    switch (mutation.type) {
+      case 'attributes':
+        // the name of the changed attribute is in
+        // mutation.attributeName
+        // and its old value is in mutation.oldValue
+        // the current value can be retrieved with 
+        // target.getAttribute(mutation.attributeName)
+        break;      case 'childList':
+        // any added nodes are in mutation.addedNodes
+        // any removed nodes are in mutation.removedNodes
+        break;
+    }
+  });
+};const observer = new MutationObserver(callback);observer.observe(target, {
+  attributes: true,
+  attributeFilter: ['foo'], // only observe attribute 'foo'
+  attributeOldValue: true,
+  childList: true
+});
+
+When you are done observing the target you can disconnect the observer and if needed, call its takeRecords method to fetch any pending mutations that have not been delivered to the callback yet:
+
+const mutations = observer.takeRecords();
+callback(mutations);
+observer.disconnect();
+
+Do not fear the DOM
+
+The DOM API is a incredibly powerful and versatile, albeit verbose API. Keep in mind that it is meant to provide low-level building blocks for developers to build abstractions upon, so in that sense it needs to be verbose to provide an unambiguous and clear API.
+
+The extra keystrokes should not scare you away from using it to its full potential.
+
+The DOM is essential knowledge for every JavaScript developer since you probably use it every day. Don’t fear it and use it to its full potential.
+
+You’ll be a better developer for it.
